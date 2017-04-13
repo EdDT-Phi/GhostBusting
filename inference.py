@@ -509,8 +509,6 @@ class JointParticleFilter:
         jail = [i for i in range(self.numGhosts) if noisyDistances[i] is None]
 
         for pos in prevBelief:
-            if pos not in prevBelief:
-                continue
             probs = [emissionModels[ghost][util.manhattanDistance(pacmanPosition, pos[ghost])] for ghost in range(self.numGhosts) if ghost not in jail]
             actualProb = 1
             for prob in probs:
@@ -588,9 +586,13 @@ class JointParticleFilter:
         for oldParticle in self.particles:
             newParticle = list(oldParticle) # A list of ghost positions
             # now loop through and update each entry in newParticle...
-
+            prevGhostPositions = list(newParticle)
             "*** YOUR CODE HERE ***"
-            
+            for ghost in range(self.numGhosts):
+                newPosDist = getPositionDistributionForGhost(
+                   setGhostPositions(gameState, newParticle), ghost, self.ghostAgents[ghost]
+                )
+                newParticle[ghost] = util.sample(newPosDist)
 
             "*** END YOUR CODE HERE ***"
             newParticles.append(tuple(newParticle))
